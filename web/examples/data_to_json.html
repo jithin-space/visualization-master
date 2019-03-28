@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>dc.js - Filtering a Stacked Chart</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/dc.css"/>
+    <style>
+      .dc-chart g.chart-body {
+          clip-path: none;
+      }
+      .dc-chart rect.stack-deselected {
+          opacity: 0.2;
+      }
+    </style>
+  </head>
+<body>
+
+<div class="container">
+<script type="text/javascript" src="header.js"></script>
+  <div id="test">
+    <div class="reset" style="visibility: hidden;">selected: <span class="filter"></span>
+      <a href="javascript:chart.filterAll();dc.redrawAll();">reset</a>
+    </div>
+  </div>
+  <div id="pie">
+    <div class="reset" style="visibility: hidden;">range: <span class="filter"></span>
+      <a href="javascript:pie.filterAll();dc.redrawAll();">reset</a>
+    </div>
+  </div>
+
+    <script type="text/javascript" src="../js/promise-polyfill.js"></script>
+    <script type="text/javascript" src="../js/fetch.umd.js"></script>
+    <script type="text/javascript" src="../js/d3.js"></script>
+    <script type="text/javascript" src="../js/crossfilter.js"></script>
+    <script type="text/javascript" src="../js/dc.js"></script>
+    <script type="text/javascript">
+
+      var chart = dc.barChart("#test"),
+          pie = dc.pieChart('#pie');
+      d3.csv("full_booth.csv").then(function(booths) {
+
+        let data = [];
+        booths.forEach(function(booth){
+
+          // CONS,BOOTH,INC2009,BJP2009,CPI2009,INC2014,BJP2014,CPI2014,INC2016,BJP2016,CPI2016,Total2009,Total2014,Total2016,BOOTHNAME
+          var udf={};
+          var ldf={};
+          var nda={};
+          var others={};
+          var station={};
+
+          station.id = booth.BOOTH;
+          station.name = booth.BOOTHNAME;
+          station.cons = booth.CONS;
+          station.data = {};
+
+         ['2009','2014','2016'].forEach(function(k){
+            console.log(k);
+            entry={};
+            entry.udf = booth['INC'+k];
+            entry.ldf =  booth['CPI'+k];
+            entry.nda = booth['BJP'+k];
+            entry.total = booth['Total'+k];
+            station.data[k]=entry;
+          });
+
+
+          data.push(station);
+
+
+
+
+
+        });
+
+        console.log(data);
+
+
+      });
+
+    </script>
+
+</div>
+  </body>
+</html>
